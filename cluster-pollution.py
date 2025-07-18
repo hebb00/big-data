@@ -7,7 +7,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import normalize
 
 
-%pyspark
 from pyspark.sql.types import StructType, StructField, IntegerType, TimestampType, DoubleType, StringType
 
 
@@ -44,12 +43,11 @@ def spark_read_pollution(filepath):
     )
 
 pollution = spark_read_pollution("hdfs://bdgtm:8020/pm_data/DE_2024-01_sds011.csv")
-%pyspark
 pollution = pollution.filter((pollution.P1.isNotNull()) & (pollution.P2.isNotNull()))
 pollution.cache()
 pollution.count()
 
-%pyspark
+
 
 # Example: 10 bins for the "value" column
 hist_data = pollution.select("p1").rdd.flatMap(lambda x: x).histogram(100)
@@ -63,10 +61,7 @@ plt.xlabel("P1")
 plt.ylabel("counts")
 plt.title("Histogram before removing outliers")
 plt.show()
-%pyspark
 from pyspark.sql import functions as F
-
-%pyspark
 from pyspark.sql import functions as F
 
 # Example: compute z-score for column 'value'
@@ -107,7 +102,7 @@ df_zscore = df_zscore.filter(
 )
 df_zscore.count()
 
-%pyspark
+
 hist_data = df_zscore.select("p1_zscore").rdd.flatMap(lambda x: x).histogram(100)
 
 bins = hist_data[0]      # Bin edges (length = num_bins + 1)
@@ -120,7 +115,7 @@ plt.xlabel("P1")
 plt.ylabel("count")
 plt.title("Histogram after removing outliers")
 plt.show()
-%pyspark
+
 
 
 
@@ -164,7 +159,6 @@ plt.ylabel('WSSSE')
 plt.title('Elbow Method for Optimal k')
 plt.show()
 
-%pyspark
 
 # Train KMeans model on the full scaled dataset with k=4
 kmeans = KMeans(featuresCol='features', predictionCol='cluster', k=5, seed=42)
@@ -182,7 +176,7 @@ print("Cluster Centers:")
 for i, center in enumerate(centers):
     print(f"Cluster {i}: {center}")
 
-%pyspark
+
 import matplotlib.cm as cm
 
 plot_data = df_clustered.select("lat","lon","cluster").limit(200000).collect()
